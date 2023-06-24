@@ -24,9 +24,12 @@ public class  User {
     @Column(name = "id")
     private Long id;
 
+    @Pattern(regexp = "^[a-z0-9_-]{3,15}$", message = "Invalid username")
     @Column(name = "_username")
     private String usNa;
 
+    @Pattern(regexp = "^[-\\w.@+&,!\"()/*]+$", message = "Password contains invalid character(s)")
+    @Size(min = 8, max = 20, message = "Password length should be 8-20 characters")
     @Column(name = "pass")
     private String pass;
 

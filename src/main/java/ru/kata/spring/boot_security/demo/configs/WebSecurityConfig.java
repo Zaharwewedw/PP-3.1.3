@@ -15,27 +15,29 @@ import ru.kata.spring.boot_security.demo.Service.UserDetailsServerImpl;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final SuccessUserHandler successUserHandler;
     private final UserDetailsServerImpl userDetailsServer;
 
     @Autowired
-    public WebSecurityConfig(SuccessUserHandler successUserHandler, UserDetailsServerImpl userDetailsServer) {
-        this.successUserHandler = successUserHandler;
+    public WebSecurityConfig(UserDetailsServerImpl userDetailsServer) {
         this.userDetailsServer = userDetailsServer;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
+        http.
+                 csrf()
+                .disable()
                 .authorizeRequests()
-                .antMatchers("/", "/index").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin().successHandler(successUserHandler)
+                .antMatchers("/auth/login", "/auth/registration", "/error")
                 .permitAll()
+                .anyRequest()
+                .authenticated()
                 .and()
-                .logout()
-                .permitAll();
+                .formLogin()
+                .loginPage("/auth/login")
+                .loginProcessingUrl("/process_login")
+                .defaultSuccessUrl("/user", true)
+                .failureUrl("/auth/login?error");
     }
 
     // аутентификация inMemory
