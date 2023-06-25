@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.model.User;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -23,4 +24,19 @@ public interface UserDao extends JpaRepository<User, Long> {
                   @Param("email") String email,
                   @Param("age") int age,
                   @Param("name") String name);
+
+    @Query(value = "SELECT * FROM sys.users", nativeQuery = true )
+    List<User> getAllByUsers();
+
+    @Query(value = "SELECT * FROM sys.users WHERE id = :id", nativeQuery = true)
+    User getById(@Param("id") Long id);
+    @Modifying
+    @Query(value = "UPDATE sys.users u SET u.name = :name, u.email = :email, u.age = :age WHERE u.id = :id", nativeQuery = true)
+    void upDateUser( @Param("id") Long id,
+                     @Param("email") String email,
+                     @Param("age") int age,
+                     @Param("name") String name);
+    @Modifying
+    @Query(value = "DELETE FROM sys.users u WHERE u.id = :id", nativeQuery = true)
+    void deleteUser(@Param("id") Long id);
 }
